@@ -1,5 +1,7 @@
 locals {
-  suffix = random_bytes.unique.hex
+  suffix         = random_bytes.unique.hex
+  fake_token     = "fake"
+  repo_whitelist = "github.com/waeltken/*"
 }
 
 resource "random_bytes" "unique" {
@@ -88,14 +90,21 @@ resource "azurerm_container_app" "default" {
 
   template {
     container {
-      name   = "atlantis"
-      image  = "ghcr.io/runatlantis/atlantis:latest"
-      cpu    = 2
-      memory = "4Gi"
+      name    = "atlantis"
+      image   = "ghcr.io/runatlantis/atlantis:latest"
+      cpu     = 2
+      memory  = "4Gi"
+      command = ["atlantis", "server", "--gh-user", local.fake_token, "--gh-token", local.fake_token, "--repo-allowlist", local.repo_whitelist]
+
+      readiness_probe {
+        port      = 4141
+        transport = "TCP"
+        path      = "/healthz"
+      }
 
       volume_mounts {
         name = "atlantis-data"
-        path = "/var/atlantis"
+        path = "/atlantis"
       }
     }
 
@@ -108,7 +117,7 @@ resource "azurerm_container_app" "default" {
   # Allow public ingress traffic
   ingress {
     external_enabled = true
-    target_port      = 8384
+    target_port      = 4141
 
     traffic_weight {
       latest_revision = true
