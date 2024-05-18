@@ -9,3 +9,12 @@ variable "resource_group_name" {
 variable "create_resource_group" {
   default = true
 }
+
+variable "gh_app_id" {
+}
+
+variable "gh_app_key" {
+
+}
+variable "gh_webhook_secret" {
+}
