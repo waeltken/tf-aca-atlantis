@@ -1,9 +1,8 @@
 locals {
-  suffix         = random_bytes.unique.hex
-  fake_token     = "fake"
-  repo_whitelist = "github.com/waeltken/*"
-  fake_command   = ["atlantis", "server", "--gh-user", local.fake_token, "--gh-token", local.fake_token, "--repo-allowlist", local.repo_whitelist]
-  command        = ["atlantis", "server", "--gh-app-id", var.gh_app_id, "--gh-app-key", var.gh_app_key, "--gh-webhook-secret", var.gh_webhook_secret, "--repo-allowlist", local.repo_whitelist, "--write-git-creds"]
+  suffix       = random_bytes.unique.hex
+  fake_token   = "fake"
+  fake_command = ["atlantis", "server", "--gh-user", local.fake_token, "--gh-token", local.fake_token, "--repo-allowlist", var.repo_whitelist, "--atlantis-url", "https://${var.domain_name}"]
+  command      = ["atlantis", "server", "--gh-app-id", var.gh_app_id, "--gh-app-key", var.gh_app_key, "--gh-webhook-secret", var.gh_webhook_secret, "--repo-allowlist", var.repo_whitelist, "--write-git-creds", "--atlantis-url", "https://${var.domain_name}"]
 }
 
 resource "random_bytes" "unique" {
@@ -100,7 +99,7 @@ resource "azurerm_container_app" "default" {
 
       readiness_probe {
         port      = 4141
-        transport = "TCP"
+        transport = "HTTP"
         path      = "/healthz"
       }
 
