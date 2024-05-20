@@ -89,6 +89,11 @@ resource "azurerm_container_app" "default" {
   resource_group_name          = local.resource_group_name
   revision_mode                = "Single"
 
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.atlantis.id]
+  }
+
   template {
     container {
       name    = "atlantis"
@@ -135,3 +140,9 @@ output "default_domain_name" {
   value = azurerm_container_app.default.latest_revision_fqdn
 }
 
+
+resource "azurerm_user_assigned_identity" "atlantis" {
+  name                = "atlantis-identity"
+  location            = var.location
+  resource_group_name = local.resource_group_name
+}
