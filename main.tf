@@ -3,7 +3,7 @@ locals {
   fake_token     = "fake"
   repo_whitelist = "github.com/waeltken/*"
   fake_command   = ["atlantis", "server", "--gh-user", local.fake_token, "--gh-token", local.fake_token, "--repo-allowlist", local.repo_whitelist]
-  command        = ["atlantis", "server", "--gh-app-id", var.gh_app_id, "--gh-app-key", var.gh_app_key, "--gh-webhook-secret", var.gh_webhook_secret, "--repo-allowlist", local.repo_whitelist]
+  command        = ["atlantis", "server", "--gh-app-id", var.gh_app_id, "--gh-app-key", var.gh_app_key, "--gh-webhook-secret", var.gh_webhook_secret, "--repo-allowlist", local.repo_whitelist, "--write-git-creds"]
 }
 
 resource "random_bytes" "unique" {
