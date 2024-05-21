@@ -102,6 +102,16 @@ resource "azurerm_container_app" "default" {
       memory  = "4Gi"
       command = local.command
 
+      env {
+        name  = "ARM_USE_MSI"
+        value = "true"
+      }
+
+      env {
+        name  = "ARM_CLIENT_ID"
+        value = azurerm_user_assigned_identity.atlantis.client_id
+      }
+
       readiness_probe {
         port      = 4141
         transport = "HTTP"
