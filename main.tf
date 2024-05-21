@@ -97,7 +97,7 @@ resource "azurerm_container_app" "default" {
   template {
     container {
       name    = "atlantis"
-      image   = "ghcr.io/runatlantis/atlantis:latest"
+      image   = "ghcr.io/waeltken/atlantis-az:main"
       cpu     = 2
       memory  = "4Gi"
       command = local.command
@@ -137,7 +137,11 @@ resource "azurerm_container_app" "default" {
 }
 
 output "default_domain_name" {
-  value = azurerm_container_app.default.latest_revision_fqdn
+  value = azurerm_container_app.default.ingress[0].fqdn
+}
+
+output "atlantis_url" {
+  value = "https://${azurerm_container_app.default.ingress[0].custom_domain[0].name}"
 }
 
 
