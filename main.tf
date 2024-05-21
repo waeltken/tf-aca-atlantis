@@ -154,6 +154,10 @@ output "atlantis_url" {
   value = "https://${azurerm_container_app.default.ingress[0].custom_domain[0].name}"
 }
 
+output "client_id" {
+  value = azurerm_user_assigned_identity.atlantis.client_id
+}
+
 
 resource "azurerm_user_assigned_identity" "atlantis" {
   name                = "atlantis-identity"
