@@ -89,11 +89,6 @@ resource "azurerm_container_app" "default" {
   resource_group_name          = local.resource_group_name
   revision_mode                = "Single"
 
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.atlantis.id]
-  }
-
   template {
     container {
       name    = "atlantis"
@@ -103,13 +98,13 @@ resource "azurerm_container_app" "default" {
       command = local.command
 
       env {
-        name  = "ARM_USE_MSI"
+        name  = "ARM_USE_OIDC"
         value = "true"
       }
 
       env {
-        name  = "ARM_CLIENT_ID"
-        value = azurerm_user_assigned_identity.atlantis.client_id
+        name  = "APPSETTING_WEBSITE_SITE_NAME"
+        value = "workaround for https://github.com/microsoft/azure-container-apps/issues/502"
       }
 
       readiness_probe {
@@ -154,13 +149,13 @@ output "atlantis_url" {
   value = "https://${azurerm_container_app.default.ingress[0].custom_domain[0].name}"
 }
 
-output "client_id" {
-  value = azurerm_user_assigned_identity.atlantis.client_id
+data "azurerm_client_config" "current" {}
+
+output "subscription_id" {
+  value = data.azurerm_client_config.current.subscription_id
+
 }
 
-
-resource "azurerm_user_assigned_identity" "atlantis" {
-  name                = "atlantis-identity"
-  location            = var.location
-  resource_group_name = local.resource_group_name
+output "tenant_id" {
+  value = data.azurerm_client_config.current.tenant_id
 }
