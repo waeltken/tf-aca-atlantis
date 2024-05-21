@@ -18,10 +18,12 @@ variable "gh_app_id" {
 }
 
 variable "gh_app_key" {
-  type = string
+  type      = string
+  sensitive = true
 }
 variable "gh_webhook_secret" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "domain_name" {
